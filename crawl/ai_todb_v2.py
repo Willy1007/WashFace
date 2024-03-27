@@ -79,8 +79,6 @@ def tb1_insert(naid, item_dict):
         for ts in effect_all:
             if ts[1] != "":
                 eff += ts[1] + "、"
-            else:
-                continue
         tb1_effect = jb_sort(eff)
 
 
@@ -108,24 +106,13 @@ def tb1_insert(naid, item_dict):
                 effect = cursor.fetchall()
                 if len(effect) == 0:
                     eff[tp] = None
-                    continue
                 else:
-                    ck = True
-                    for ts in effect:   # 確認是否都是空字串
+                    sb = ""
+                    for ts in effect:
                         if ts[1] != "":
-                            ck = False
-                    if ck == True:
-                        eff[tp] = None
-                        continue
-                    else:
-                        sb = ""
-                        for ts in effect:
-                            if ts[1] != "":
-                                sb += ts[1] + "、"
-                            else:
-                                continue
-                        eff[tp] = jb_sort(sb)
-
+                            sb += ts[1] + "、"
+                    eff[tp] = jb_sort(sb)
+     
 
         tba = (naid, item_dict[naid], float(Avg_score[0]), tb1_effect,
             A_sco["乾性肌膚"], A_sco["油性肌膚"], A_sco["敏感性肌膚"], A_sco["混合性肌膚"],
@@ -155,9 +142,9 @@ def tb1_insert(naid, item_dict):
         conn.commit()
         cursor.close()
         conn.close()
-        print("新增成功")
+        print("Table01新增成功")
     except Exception:
-        print("新增失敗")
+        print("Table01新增失敗")
 
 
 def tb1_del(naid):
@@ -173,9 +160,9 @@ def tb1_del(naid):
         conn.commit()
         cursor.close()
         conn.close()
-        print("刪除成功")
+        print("Table01刪除成功")
     except Exception:
-        print("刪除失敗")
+        print("Table01刪除失敗")
 
 
 def tb2_db(tb2):
@@ -193,9 +180,9 @@ def tb2_db(tb2):
         conn.commit()
         cursor.close()
         conn.close()
-        print("新增成功")
+        print("Table02新增成功")
     except Exception:
-        print("新增失敗")
+        print("Table02新增失敗")
 
 
 def updata_ck(naid):
@@ -222,3 +209,47 @@ def updata_ck(naid):
         return up_ck
     except Exception:
         print("比對失敗")
+
+
+def get_ckurl(naid):
+    try:
+        conn = pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db, charset=charset)
+        print('Successfully connected!')
+        cursor = conn.cursor()
+
+        sql = f"""
+        select Url from Table02
+        where Name_id = {naid};
+        """
+        cursor.execute(sql)
+        datas = cursor.fetchall()
+        ck_url = []
+        for data in datas:
+            ck_url.append(data[0])
+        
+        cursor.close()
+        conn.close()
+        return ck_url
+    except Exception:
+        print("ck_url ERROR")
+
+
+def get_info_table():
+    try:
+        conn = pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db, charset=charset)
+        print('Successfully connected!')
+        cursor = conn.cursor()
+
+        sql = f"""
+        select ID, info_name, info_url from info_table;
+        """
+        cursor.execute(sql)
+        datas = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+        print("info_table 成功")
+        return datas
+    except Exception:
+        print("info_table ERROR")
+
