@@ -202,10 +202,13 @@ def updata_ck(naid):
             if i[0] == str(datetime.date.today()):
                 up_ck = True
                 break
-        
+
         cursor.close()
         conn.close()
-        print("比對成功")
+        if up_ck == True:
+            print("有更新資料")
+        else:
+            print("無更新資料")
         return up_ck
     except Exception:
         print("比對失敗")

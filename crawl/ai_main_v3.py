@@ -60,7 +60,6 @@ for data in info_table:
     urls.append(data[2])
     item_dict[data[0]] = data[1]
 
-columns = ["Name_id", "Skin_type", "Score", "Age", "Content", "Con2", "Url", "Date_ck"]
 
 naid = 0
 for url in urls:
@@ -76,7 +75,8 @@ for url in urls:
         if url == None:
             break
     
-    tb2_db(tb2)
+    if len(tb2) != 0:
+        tb2_db(tb2)
 
     up_ck = updata_ck(naid)  # 判斷是否有今天新增的
     if up_ck == True:
