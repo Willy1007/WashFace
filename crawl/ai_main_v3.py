@@ -61,30 +61,36 @@ for data in info_table:
     item_dict[data[0]] = data[1]
 
 
-naid = 0
-for url in urls:
-    tb2 = []
-    ck_url = get_ckurl(naid)
-    
-    ts = 0
-    next_page = True
-    while next_page != False:
-        url = get_info(url, ts, naid, ck_url)
-        print(url)
-        ts += 15
-        if url == None:
-            break
-    
-    if len(tb2) != 0:
-        tb2_db(tb2)
+start = True
 
-    up_ck = updata_ck(naid)  # 判斷是否有今天新增的
-    if up_ck == True:
-        tb1_del(naid)
-        tb1_insert(naid, item_dict)
+while start == True:
+    try:
+        naid = 0
+        for url in urls:
+            tb2 = []
+            ck_url = get_ckurl(naid)
+            
+            ts = 0
+            next_page = True
+            while next_page != False:
+                url = get_info(url, ts, naid, ck_url)
+                print(url)
+                ts += 15
+                if url == None:
+                    break
+            
+            if len(tb2) != 0:
+                tb2_db(tb2)
 
-    time.sleep(random.randint(3, 10))
-    
-    naid += 1
-    
+            up_ck = updata_ck(naid)  # 判斷是否有今天新增的
+            if up_ck == True:
+                tb1_del(naid)
+                tb1_insert(naid, item_dict)
+
+            time.sleep(random.randint(3, 10))
+            
+            naid += 1
+        start = False
+    except Exception as e:
+        pass
 
