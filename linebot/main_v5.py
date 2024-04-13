@@ -11,10 +11,10 @@ from PIL import Image
 import numpy as np
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 import re, json, configparser, requests, cv2, os
-from select_tool_v2 import select_1, select_2, load_js1, load_js2, push_db
+from select_tool_v3 import select_1, select_2, load_js1, load_js2, push_db, get_info_dict
 
 
-app = Flask(__name__, static_url_path='/img', static_folder='images')
+app = Flask(__name__)
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -22,6 +22,7 @@ config.read('config.ini')
 line_bot_api = LineBotApi(config.get('line-bot', 'channel_access_token'))
 handler = WebhookHandler(config.get('line-bot', 'channel_secret'))
 
+info_dict = get_info_dict()
 
 
 @app.route("/", methods=['POST'])
@@ -95,26 +96,6 @@ def handle_message(event):
 
     elif isinstance(event.message, TextMessage):
         if '推薦:' in event.message.text:
-            info_dict = {
-            "超綿感泡泡保濕洗面乳": 0,
-            "青柚籽深層潔顏乳": 1,
-            "卵肌溫和去角質洗面乳": 2,
-            "極潤健康深層清潔調理洗面乳": 3,
-            "極潤保濕洗面乳": 4,
-            "豆乳美肌洗面乳": 5,
-            "草本調理淨化洗顏乳": 6,
-            "溫和保濕潔顏乳": 7,
-            "超微米胺基酸溫和潔顏慕絲": 8,
-            "淨白洗面乳": 9,
-            "溫和水嫩洗面乳": 10,
-            "透白勻亮洗面乳": 11,
-            "碧菲絲特毛孔淨透洗面乳": 12,
-            "清透極淨洗面乳": 13,
-            "海泥毛孔潔淨洗顏乳": 14,
-            "碧菲絲特抗暗沉碳酸泡洗顏": 15,
-            "碧菲絲特清爽碳酸泡洗顏": 16,
-            "碧菲絲特保濕碳酸泡洗顏": 17
-            }
             push_id = info_dict[event.message.text[3:]]
             push_info = select_1(push_id)
             id_tp = (info_dict[push_info[6]], info_dict[push_info[7]], info_dict[push_info[8]])
@@ -132,32 +113,32 @@ def handle_message(event):
                 i = product_data
                 skin = TextSendMessage(text='請選擇膚質!',
                                     quick_reply=QuickReply(items=[
-                                        QuickReplyButton(action=MessageAction(label='乾性肌膚', text='A: 乾性肌膚')),
-                                        QuickReplyButton(action=MessageAction(label='油性肌膚', text='B: 油性肌膚')),
-                                        QuickReplyButton(action=MessageAction(label='敏感性肌膚', text='C: 敏感性肌膚')),
-                                        QuickReplyButton(action=MessageAction(label='混合性肌膚', text='D: 混合性肌膚'))
+                                        QuickReplyButton(action=MessageAction(label='乾性肌膚', text='1: 乾性肌膚')),
+                                        QuickReplyButton(action=MessageAction(label='油性肌膚', text='2: 油性肌膚')),
+                                        QuickReplyButton(action=MessageAction(label='敏感性肌膚', text='3: 敏感性肌膚')),
+                                        QuickReplyButton(action=MessageAction(label='混合性肌膚', text='4: 混合性肌膚'))
                                     ]))
                 line_bot_api.reply_message(event.reply_token, skin)
             except NameError:
                 line_bot_api.reply_message(event.reply_token, TextSendMessage(text="請上傳照片!!!"))
 
-        elif re.match('[ABCD]', event.message.text[:1]):
+        elif re.match('[1-4]', event.message.text[:1]):
             skin_os = event.message.text[:1]
             age = TextSendMessage(text='請選擇年紀範圍!',
                                 quick_reply=QuickReply(items=[
-                                    QuickReplyButton(action=MessageAction(label='20歲以下', text='1: 20歲以下')),
-                                    QuickReplyButton(action=MessageAction(label='21-30歲', text='2: 21-30歲')),
-                                    QuickReplyButton(action=MessageAction(label='31-45歲', text='3: 31-45歲')),
-                                    QuickReplyButton(action=MessageAction(label='46歲以上', text='4: 46歲以上'))
+                                    QuickReplyButton(action=MessageAction(label='20歲以下', text='A: 20歲以下')),
+                                    QuickReplyButton(action=MessageAction(label='21-30歲', text='B: 21-30歲')),
+                                    QuickReplyButton(action=MessageAction(label='31-45歲', text='C: 31-45歲')),
+                                    QuickReplyButton(action=MessageAction(label='46歲以上', text='D: 46歲以上'))
                                 ]))
             line_bot_api.reply_message(event.reply_token, age)
 
-        elif re.match('[1-4]', event.message.text[:1]):
+        elif re.match('[ABCD]', event.message.text[:1]):
             age_os = event.message.text[:1]
-            age_type = f'{skin_os}{age_os}'
+            age_type = f'{age_os}{skin_os}'
             result = select_2(product_data[0], age_type)
-            skin_dict = {"A": "乾性肌膚", "B": "油性肌膚", "C": "敏感性肌膚", "D": "混合性肌膚"}
-            age_dict = {"1": "20歲以下", "2": "21-30歲", "3": "31-45歲", "4": "46歲以上"}
+            skin_dict = {"1": "乾性肌膚", "2": "油性肌膚", "3": "敏感性肌膚", "4": "混合性肌膚"}
+            age_dict = {"A": "20歲以下", "B": "21-30歲", "C": "31-45歲", "D": "46歲以上"}
             
             with open('v3.json', mode='r', encoding='utf-8') as fi:
                 js = json.load(fi)
