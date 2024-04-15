@@ -3,7 +3,7 @@ from PIL import Image
 import numpy as np
 import requests, cv2
 from keras.applications.mobilenet_v2 import preprocess_input
-from select_tool import select_1
+from select_tool import select_1, select_2
 
 app = Flask(__name__, static_url_path="/imgs", static_folder="static")
 
@@ -55,6 +55,27 @@ def upload():
         Advantage = data[4],
         Defect = data[5],
         Name_id = predicted_id
+    )
+
+@app.route('/range', methods=["POST"])
+def range():
+    age = request.form["age"][:1]
+    skin = request.form["skin"][:1]
+    pid = int(request.form["pid"])
+    user_age = request.form["age"][1:]
+    user_skin = request.form["skin"][1:]
+    result = select_2(pid, age + skin)
+
+    age_data = str(result[0]) if result[0] != None else "無使用者分享"
+    skin_data = result[1] if result[1] != None else "無使用者分享"
+    
+    return render_template(
+        "range.html",
+        user_age = user_age,
+        user_skin = user_skin,
+        age = age_data,
+        skin = skin_data,
+        Name_id = pid
     )
     
 

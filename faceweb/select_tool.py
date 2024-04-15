@@ -38,3 +38,19 @@ def select_1(product_id):
     return data
 
 
+def select_2(pid, age_type):
+    conn = pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db, charset=charset)
+    cursor = conn.cursor()
+
+    sql = f"""
+    select {age_type}_score, {age_type}_effect from Table01
+    where Name_id = {pid};
+    """
+    cursor.execute(sql)
+    data = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return data
+

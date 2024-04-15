@@ -32,5 +32,27 @@
             <td>缺點：{{Defect}}</td>
         </tr>
     </table>
+    <br>
+    <h1>請選擇年齡範圍和皮膚屬性</h1>
+    <form method="POST" action="/range">
+        <select name="pid">
+            <option value="{{Name_id}}">商品編號:{{Name_id}}</option>
+        </select>
+        <select name="age">
+            <option value="A20歲以下">20歲以下</option>
+            <option value="B21-30歲">21-30歲</option>
+            <option value="C31-45歲">31-45歲</option>
+            <option value="D46歲以上">46歲以上</option>
+        </select>
+        <select name="skin">
+            <option value="1乾性肌膚">乾性肌膚</option>
+            <option value="2油性肌膚">油性肌膚</option>
+            <option value="3敏感性肌膚">敏感性肌膚</option>
+            <option value="4混合性肌膚">混合性肌膚</option>
+        </select>
+        <br>
+        <br>
+        <input type="submit" value="送出">
+    </form>
 </body>
 </html>
