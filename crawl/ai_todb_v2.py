@@ -111,7 +111,11 @@ def tb1_insert(naid, item_dict):
                     for ts in effect:
                         if ts[1] != "":
                             sb += ts[1] + "、"
-                    eff[tp] = jb_sort(sb)
+                    
+                    if sb == "":
+                        eff[tp] = None
+                    else:
+                        eff[tp] = jb_sort(sb)
      
 
         tba = (naid, item_dict[naid], float(Avg_score[0]), tb1_effect,
