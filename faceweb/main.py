@@ -3,7 +3,7 @@ from PIL import Image
 import numpy as np
 import requests, cv2
 from keras.applications.mobilenet_v2 import preprocess_input
-from select_tool import select_1, select_2
+from select_tool import select_1, select_2, pushdata
 
 app = Flask(__name__, static_url_path="/imgs", static_folder="static")
 
@@ -78,6 +78,52 @@ def range():
         Name_id = pid
     )
     
+@app.route("/push", methods=["POST"])
+def push():
+    pid = int(request.form["pid"])
+    datas = pushdata(pid)
+    p1_id = datas[0][0]
+    p1_name = datas[0][1]
+    p1_score = datas[0][2]
+    p1_effect = datas[0][3]
+    p1_good = datas[0][4]
+    p1_bad = datas[0][5]
+
+    p2_id = datas[1][0]
+    p2_name = datas[1][1]
+    p2_score = datas[1][2]
+    p2_effect = datas[1][3]
+    p2_good = datas[1][4]
+    p2_bad = datas[1][5]
+
+    p3_id = datas[2][0]
+    p3_name = datas[2][1]
+    p3_score = datas[2][2]
+    p3_effect = datas[2][3]
+    p3_good = datas[2][4]
+    p3_bad = datas[2][5]
+    return render_template(
+        "infopush.html",
+        p1_id = p1_id,
+        p1_name = p1_name,
+        p1_score = p1_score,
+        p1_effect = p1_effect,
+        p1_good = p1_good,
+        p1_bad = p1_bad,
+        p2_id = p2_id,
+        p2_name = p2_name,
+        p2_score = p2_score,
+        p2_effect = p2_effect,
+        p2_good = p2_good,
+        p2_bad = p2_bad,
+        p3_id = p3_id,
+        p3_name = p3_name,
+        p3_score = p3_score,
+        p3_effect = p3_effect,
+        p3_good = p3_good,
+        p3_bad = p3_bad
+    )
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)

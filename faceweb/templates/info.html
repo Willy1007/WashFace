@@ -7,7 +7,7 @@
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
 </head>
 <body>
-    <table border="1">
+    <table border="1" WIDTH="300">
         <tr>
             <td colspan="7" align="center">
                 <img src="/imgs/{{Name_id}}.jpg" alt="圖片" width="300" height="300">
@@ -32,6 +32,13 @@
             <td>缺點：{{Defect}}</td>
         </tr>
     </table>
+    <br>
+    <form method="POST" action="/push">
+        <select name="pid">
+            <option value="{{Name_id}}">商品編號:{{Name_id}}</option>
+        </select>
+        <input type="submit" value="推薦相似商品">
+    </form>
     <br>
     <h1>請選擇年齡範圍和皮膚屬性</h1>
     <form method="POST" action="/range">
